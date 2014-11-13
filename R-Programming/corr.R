@@ -39,21 +39,16 @@ corr <- function(directory, threshold = 0) {
     ## length(cr)
     ## [1] 323
     
-    correlate <- function(fname) {
+    res <- vector()
+    for (file in list.files(directory)) {
         # Read data from file
-        data <- read.csv(file.path(directory, fname))
-        
+        data <- read.csv(file.path(directory, file))
         # Retrieve number of complete observations
         nobs <- sum(complete.cases(data))
-        
-        # If enough observations
         if (nobs > threshold) {
             # Compute correlation between nitrate & sulfate
-            cor(data$nitrate, data$sulfate, use="complete.obs")
+            res <- c(res,cor(data$nitrate, data$sulfate, use="complete.obs"))
         }
     }
-    
-    tcorrs <- sapply(list.files(directory), correlate) 
-    # Remove NULL elements returned by correlate
-    tcorrs[!is.null(tcorrs)]
+    return(res)
 }
